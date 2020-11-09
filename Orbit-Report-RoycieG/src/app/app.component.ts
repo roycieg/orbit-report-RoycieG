@@ -9,16 +9,37 @@ import { Component } from '@angular/core';
 export class AppComponent {
     title = 'Orbit-Report-RoycieG';
     sourceList: Satellite[];
-    constructor(){
-      this.sourceList = [
-        new Satellite("SiriusXM", "Communication", "2009-03-21", "LOW", true),
-        new Satellite("Cat Scanner", "Imaging", "2012-01-05", "LOW", true),
-        new Satellite("Weber Grill", "Space Debris", "1996-03-25", "HIGH", false),
-        new Satellite("GPS 938", "Positioning", "2001-11-01", "HIGH", true),
-        new Satellite("ISS", "Space Station", "1998-11-20", "LOW", true),
-       ];
+
+    constructor() {
+      this.sourceList = [];
+      this.displayList = [];
+      let satellitesUrl = 'https://handlers.education.launchcode.org/static/satellites.json';
+   
+      window.fetch(satellitesUrl).then(function(response) {
+         response.json().then(function(data) {
+  
+          let fetchedSatellites = data.satellites;
+          let i=0;
+          while(i<fetchedSatellites.length){
+            this.sourceList.push(new Satellite(
+              fetchedSatellites[i].name,
+              fetchedSatellites[i].type, 
+              fetchedSatellites[i].launchDate, 
+              fetchedSatellites[i].orbitType, 
+              fetchedSatellites[i].operational
+            ));
+            i+=1
+          }
+          // make a copy of the sourceList to be shown to the user
+          this.displayList = this.sourceList.slice(0);
+  
+         }.bind(this));
+      }.bind(this));
+   
+   }
+  
 }
-}
+
 
 
   
